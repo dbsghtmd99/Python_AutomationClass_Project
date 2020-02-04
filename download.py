@@ -1,7 +1,6 @@
 import datetime
 import os
 import shutil
-
 import youtube_dl
 
 
@@ -15,8 +14,8 @@ class Download(object):
         d = datetime.datetime.today()
         newFolderName = "{:02d}{:02d}{:02d}_{:02d}{:02d}{:02d}".format(d.year, d.month, d.day, d.hour, d.minute,
                                                                        d.second)
-        # print(type(newFolderName)) # str
-        # print(newFolderName)
+        # print(type(newFolderName))  # str인지 확인
+        # print(newFolderName)  # 정상 출력 확인
 
         # 폴더를 만들기 전 이름이 중복되는지 확인합니다.
         if not os.path.isdir(newFolderName):

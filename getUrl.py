@@ -18,14 +18,14 @@ class GetUrl(object):
         elif 'channel' in Url.split('.com/')[-1]:
             self.channelUrl = Url
             self.findUrlFromChannel()
-            self.findUrlFromPlaylist()
+            self.urlList = self.findUrlFromPlaylist()
             self.down()
 
         # 'https://www.youtube.com/user/SMTOWN' 과 같은경우
         elif 'user' in Url.split('.com/')[-1]:
             self.userUrl = Url
             self.findUrlFromUser()
-            self.findUrlFromPlaylist()
+            self.urlList = self.findUrlFromPlaylist()
             self.down()
 
         # 일반적인 동영상인 경우
@@ -42,7 +42,8 @@ class GetUrl(object):
 
         # 동영상들의 제목과 url을 추출합니다.
         videoTitle = soup.findAll('tr', {'class': 'pl-video yt-uix-tile'})
-        videoLinks = soup.findAll('a', {'class': 'pl-video-title-link yt-uix-tile-link yt-uix-sessionlink spf-link'})
+        videoLinks = soup.findAll('a', {'class': 'pl-video-title-link '
+                                                 'yt-uix-tile-link yt-uix-sessionlink spf-link'})
 
         # 재생목록이 비어있거나 비공개로 설정된 경우
         if len(videoTitle) == 0 or len(videoLinks) == 0:
@@ -79,40 +80,8 @@ class GetUrl(object):
 
     # 원하는 채널의 영상의 정보를 모두 가져옵니다.
     def findUrlFromChannel(self):
-        # 유튜브 특성상 동영상이 많은 채널의 경우 동영상을 다 불러오기 전에 html정보를 가져오면 손실되는 정보가 있기에
-        # 채널의 네비게이션 바 아래에 있는 해당 채널이 '업로드한 동영상'을 모두 재생목록에 만들어 재생시켜주는 재생목록의 url을 1차적으로 가져옵니다.
-        # # channelUrl의 html정보를 읽어옵니다.
-        # html = requests.get(self.channelUrl)
-        # soup = bs(html.text, 'html.parser')
-        # html.close()
-        #
-        # # '모두 재생' 버튼에 담긴 정보를 가져옵니다.
-        # channelLinks = soup.findAll('a', {
-        #     'class': 'yt-uix-button shelves-play play-all-icon-btn yt-uix-sessionlink yt-uix-button-default yt-uix-button-size-small yt-uix-button-has-icon no-icon-markup'})
-        # # print(channelLinks)
-        # try:
-        #     for link in channelLinks:
-        #         # https://www.youtube.com/watch?v=Ja0ioh5l3Y0&list=UUtckgmUcpzqGnzcs7xEqMzQ (최신순 재생)
-        #         # https://www.youtube.com/watch?v=K_5lal40lCk&list=PUtckgmUcpzqGnzcs7xEqMzQ (인기순 재생)
-        #         if link.get('href').split('list=')[-1][0:2] == 'UU':
-        #             playListID = link.get('href').split('list=')[-1]
-        #
-        #             # 'https://www.youtube.com/playlist?list=' + playListID 와 같은 형태로 접속하면 새로운 url로 redirect 되기 때문에
-        #             # beautifulsoup가 받아온 request 는 html 정보를 가져 올 수가 없으므로
-        #             # redirect 되는 규칙을 찾아서 redirect 된 후의 url의 찾아냅니다.
-        #             # 확인 결과, redirect된 url은 다음과 같습니다.
-        #             # 'https://www.youtube.com' + 재생목록의 첫번째 영상의 videoID + '&list=' + 재생목록ID
-        #
-        #             playAllVideosUrl = 'https://www.youtube.com/playlist?list=' + playListID
-        #             self.playListUrl = playAllVideosUrl
-        #
-        #             # https://www.youtube.com/watch?v=Ja0ioh5l3Y0 로부터 /watch?v=Ja0ioh5l3Y0 만 추출합니다.
-        #             firstVideoID = self.findUrlFromPlaylist()[1][0].split('.com')[-1]
-        #             # print(firstVideoID)
-        #             realURL = 'https://www.youtube.com' + firstVideoID + '&list=' + playListID
-        #             print(realURL)
-        # 'https://www.youtube.com/channel/UCtckgmUcpzqGnzcs7xEqMzQ'
-        channelID = self.channelUrl.split('channel/')[-1][2:]
+        # 채널 Url로부터 채널 ID를 추출합니다.
+        channelID = self.channelUrl.split('channel/')[-1][2:]  # tckgmUcpzqGnzcs7xEqMzQ
         playListID = 'UU' + channelID  # UUtckgmUcpzqGnzcs7xEqMzQ
 
         playAllVideosUrl = 'https://www.youtube.com/playlist?list=' + playListID
@@ -124,6 +93,7 @@ class GetUrl(object):
         # realURL = 'https://www.youtube.com' + firstVideoID + '&list=' + playListID
         # print(realURL)  # https://www.youtube.com/watch?v=Ja0ioh5l3Y0&list=UUtckgmUcpzqGnzcs7xEqMzQ
 
+    # 원하는 채널의 영상의 정보를 모두 가져옵니다.
     def findUrlFromUser(self):
         # userUrl의 html정보를 읽어옵니다.
         html = requests.get(self.userUrl)
@@ -144,9 +114,9 @@ class GetUrl(object):
         playListID = 'UU' + userID
         playAllVideosUrl = 'https://www.youtube.com/playlist?list=' + playListID
         self.playListUrl = playAllVideosUrl
-        # print(self.playListUrl)
+        # print(self.playListUrl) # 재생목록 링크
 
+    # Download 클래스로부터 urlList 안의 url들에대해 일괄적으로 다운로드를 시작합니다.
     def down(self):
-        # Download 클래스로부터 urlList 안의 url들에대해 일괄적으로 다운로드를 시작합니다.
         down = Download(self.urlList)
         down.multiDown()
