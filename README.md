@@ -132,8 +132,6 @@ inputUrl()
 ```
 <br>
 <br>
-<br>
-<br>
 
 #### 2.3.2. GetUrl Class
 GetUrl 클래스는 main 으로부터 입력된 Url을 바탕으로 동영상의 Url이 담긴 list를 찾아낸 뒤, 다운로드를 수행하는 클래스이다.
@@ -355,8 +353,6 @@ Pycharm에서 입력을 받을 때 링크를 입력하게 되면 그 웹사이�
 ![7-5](image/7-5.png)
 
 <br>
-<br>
-<br>
 
 ### 3.2. 채널을 다운로드 할 때 (/channel 인경우)
 
@@ -378,9 +374,6 @@ https://www.youtube.com/channel/UCnd-UJ1zLLW6fGYaRl39APg 를 입력해야 함에
 ![8-3](image/8-3.png)
 <br>
 <br>
-<br>
-<br>
-<br>
 
 다운로드가 끝난 후 동영상들이 저장 된 모습
 
@@ -388,10 +381,6 @@ https://www.youtube.com/channel/UCnd-UJ1zLLW6fGYaRl39APg 를 입력해야 함에
 
 ![8-5](image/8-5.png)
 
-<br>
-<br>
-<br>
-<br>
 <br>
 <br>
 
